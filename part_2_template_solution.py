@@ -8,12 +8,9 @@ import utils as u
 import new_utils as nu
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import ShuffleSplit, cross_validate, train_test_split
-from sklearn.model_selection import (
-    ShuffleSplit,
-    cross_validate,
-    KFold,
-)
+from sklearn.model_selection import ShuffleSplit, cross_validate, KFold, train_test_split
+from sklearn.metrics import confusion_matrix
+
 # ======================================================================
 
 # I could make Section 2 a subclass of Section 1, which would facilitate code reuse.
