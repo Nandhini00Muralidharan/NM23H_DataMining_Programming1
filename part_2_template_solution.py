@@ -229,7 +229,7 @@ class Section2:
                     unique, counts_test = np.unique(ytest, return_counts=True)
                     class_count_test = dict(zip(unique, counts_test))
 
-                    answers[ntrain][ntest] = {
+                    answers[ntrain] = {
                         "partC": partC,
                         "partD": partD,
                         "partF": partF,
