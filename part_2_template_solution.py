@@ -141,8 +141,6 @@ class Section2:
         ntrain_list = [1000, 5000, 10000]
         ntest_list = [200, 1000, 2000]
         
-        answers = {}
-        
         for ntrain in ntrain_list:
             answers[ntrain] = {}
             for ntest in ntest_list:
@@ -179,21 +177,22 @@ class Section2:
                     cv_results_F = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_F, cv=cv_F)
                     
                     partF = {}
-                    scores_F = {}
-
-                    mean_accuracy_F = cv_results_F['test_score'].mean()
-                    std_accuracy_F = cv_results_F['test_score'].std()
-                    mean_fit_time_F = cv_results_F['fit_time'].mean()
-                    std_fit_time_F = cv_results_F['fit_time'].std()
-
-                    scores_F['mean_fit_time'] = mean_fit_time_F
-                    scores_F['std_fit_time'] = std_fit_time_F
-                    scores_F['mean_accuracy'] = mean_accuracy_F
-                    scores_F['std_accuracy'] = std_accuracy_F
                     
+                    scores_F = cross_validate(clf_F, Xtrain, ytrain, cv=cv_F, return_train_score=True)
+                    clf_F.fit(Xtrain, ytrain)
+                    scores_train_F = clf_F.score(Xtrain, ytrain)
+                    scores_test_F = clf_F.score(Xtest, ytest)
+                    mean_cv_accuracy_F = scores_F["test_score"].mean()
+                    conf_mat_train = confusion_matrix(ytrain, clf_F.predict(Xtrain))
+                    conf_mat_test = confusion_matrix(ytest, clf_F.predict(Xtest))
+                    
+                    partF["scores_train_F"] = scores_train_F
+                    partF["scores_test_F"] = scores_test_F
+                    partF["mean_cv_accuracy_F"] = mean_cv_accuracy_F
                     partF['clf'] = clf_F
                     partF['cv'] = cv_F
-                    partF['scores'] = scores_F
+                    partF['conf_mat_train'] = conf_mat_train
+                    partF['conf_mat_test'] = conf_mat_test
                     
                     #PART D
                     clf_D = DecisionTreeClassifier(random_state=self.seed)
@@ -232,7 +231,7 @@ class Section2:
                     unique, counts_test = np.unique(ytest, return_counts=True)
                     class_count_test = dict(zip(unique, counts_test))
 
-                    answers[ntrain][ntest] = {
+                    answer[(ntrain,ntest)] = {
                         "partC": partC,
                         "partD": partD,
                         "partF": partF,
@@ -240,6 +239,6 @@ class Section2:
                         "ntest": ntest,
                         "class_count_train": class_count_train,
                         "class_count_test": class_count_test
+        
                     }
-                    
-            return answers
+        return answer
