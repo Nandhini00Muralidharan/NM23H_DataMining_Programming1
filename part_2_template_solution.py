@@ -138,16 +138,18 @@ class Section2:
                                the training set (a list, not a numpy array)
         """
         
-        train_sizes = [1000, 5000, 10000]
-        test_sizes = [200, 1000, 2000]
+        ntrain_list = [1000, 5000, 10000]
+        ntest_list = [200, 1000, 2000]
         
         answers = {}
         
-        for ntrain in train_sizes:
+        for ntrain in ntrain_list:
             answers[ntrain] = {}
-            for ntest in test_sizes:
-                    Xtrain, ytrain = X[:ntrain], y[:ntrain]
-                    Xtest, ytest = X[ntrain:ntrain+ntest], y[ntrain:ntrain+ntest]
+            for ntest in ntest_list:
+                    Xtrain = X[0:ntrain, :]
+                    ytrain = y[0:ntrain]
+                    Xtest = X[ntrain:ntrain+ntest]
+                    ytest = y[ntrain:ntrain+ntest]
 
                     #PART C
                     clf_C = DecisionTreeClassifier(random_state=self.seed)
@@ -211,8 +213,8 @@ class Section2:
                     scores_D['mean_accuracy'] = mean_accuracy_D
                     scores_D['std_accuracy'] = std_accuracy_D
 
-                    partD['clf'] = clf_C
-                    partD['cv'] = cv_C
+                    partD['clf'] = clf_D
+                    partD['cv'] = cv_D
                     partD['scores'] = scores_D
                     partD['explain_kfold_vs_shuffle_split'] = """
                         K-Fold Cross-Validation divides the dataset into k sequential folds, utilizing each fold once as a test set while the remaining k-1 folds serve as the training set. This method ensures that every data point gets an opportunity to be in both the training and test sets, making it advantageous for smaller datasets where maximizing training data is crucial.
