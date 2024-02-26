@@ -4,16 +4,7 @@
 import numpy as np
 from numpy.typing import NDArray
 from typing import Any
-import utils as u
-import new_utils as nu
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import ShuffleSplit, cross_validate, train_test_split
-from sklearn.model_selection import (
-    ShuffleSplit,
-    cross_validate,
-    KFold,
-)
+
 # ======================================================================
 
 # I could make Section 2 a subclass of Section 1, which would facilitate code reuse.
@@ -22,7 +13,7 @@ from sklearn.model_selection import (
 
 
 class Section2:
-    def _init_(
+    def __init__(
         self,
         normalize: bool = True,
         seed: int | None = None,
@@ -61,9 +52,9 @@ class Section2:
         NDArray[np.int32],
     ]:
         answer = {}
-        # Enter your code and fill the answer` dictionary
+        # Enter your code and fill the `answer`` dictionary
 
-        # answer is a dictionary with the following keys:
+        # `answer` is a dictionary with the following keys:
         # - nb_classes_train: number of classes in the training set
         # - nb_classes_test: number of classes in the testing set
         # - class_count_train: number of elements in each class in the training set
@@ -76,23 +67,10 @@ class Section2:
         # - max_Xtest: maximum value in the testing set
 
         # return values:
-        # Xtrain, ytrain, Xtest, ytest: the data used to fill the answer` dictionary
+        # Xtrain, ytrain, Xtest, ytest: the data used to fill the `answer`` dictionary
 
-        #DUMMY VALUE TRAIN AND TEST
         Xtrain = Xtest = np.zeros([1, 1], dtype="float")
         ytrain = ytest = np.zeros([1], dtype="int")
-
-        #TRAINING AND TEST DATA
-        X, y, Xtest, ytest = u.prepare_data()
-        
-        #SCALAING DATA AND CONVERT DATA TYPE OF LABEL TO INT
-        Xtrain = X/255.0
-        Xtest = Xtest/255.0
-        ytrain = y.astype(int)
-        ytest = ytest.astype(int)
-        
-        print(set(ytrain))
-        print(set(ytest))
 
         return answer, Xtrain, ytrain, Xtest, ytest
 
@@ -122,11 +100,11 @@ class Section2:
         ntest_list: list[int] = [],
     ) -> dict[int, dict[str, Any]]:
         """ """
-        # Enter your code and fill the answer` dictionary
+        # Enter your code and fill the `answer`` dictionary
         answer = {}
 
         """
-        answer is a dictionary with the following keys:
+        `answer` is a dictionary with the following keys:
            - 1000, 5000, 10000: each key is the number of training samples
 
            answer[k] is itself a dictionary with the following keys
@@ -140,5 +118,5 @@ class Section2:
             - "class_count_test": number of elements in each class in
                                the training set (a list, not a numpy array)
         """
-                    
-            return answers
+
+        return answer
