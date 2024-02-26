@@ -4,7 +4,16 @@
 import numpy as np
 from numpy.typing import NDArray
 from typing import Any
-
+import utils as u
+import new_utils as nu
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import ShuffleSplit, cross_validate, train_test_split
+from sklearn.model_selection import (
+    ShuffleSplit,
+    cross_validate,
+    KFold,
+)
 # ======================================================================
 
 # I could make Section 2 a subclass of Section 1, which would facilitate code reuse.
@@ -72,6 +81,16 @@ class Section2:
         Xtrain = Xtest = np.zeros([1, 1], dtype="float")
         ytrain = ytest = np.zeros([1], dtype="int")
 
+        X, y, Xtest, ytest = u.prepare_data()
+        
+        Xtrain = nu.scale_data(X)
+        Xtest = nu.scale_data(Xtest)
+        ytrain = y.astype(int)
+        ytest = ytest.astype(int)
+        
+        print(set(ytrain))
+        print(set(ytest))
+
         return answer, Xtrain, ytrain, Xtest, ytest
 
     """
@@ -118,5 +137,110 @@ class Section2:
             - "class_count_test": number of elements in each class in
                                the training set (a list, not a numpy array)
         """
+        
+        train_sizes = [1000, 5000, 10000]
+        test_sizes = [200, 1000, 2000]
+        
+        answers = {}
+        
+        for ntrain in train_sizes:
+            answers[ntrain] = {}
+            for ntest in test_sizes:
+                    Xtrain, ytrain = X[:ntrain], y[:ntrain]
+                    Xtest, ytest = X[ntrain:ntrain+ntest], y[ntrain:ntrain+ntest]
 
-        return answer
+
+                    #PART F
+                    cv = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
+                    answer_lr = {}
+                    clf_lr = LogisticRegression(max_iter=300, multi_class='ovr', random_state=self.seed)
+                    logistic_regression_results = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_lr, cv=cv)
+                    lr_scores = {}
+
+                    mean_accuracy = logistic_regression_results['test_score'].mean()
+                    std_accuracy = logistic_regression_results['test_score'].std()
+                    mean_fit_time = logistic_regression_results['fit_time'].mean()
+                    std_fit_time = logistic_regression_results['fit_time'].std()
+
+                    lr_scores['mean_fit_time'] = mean_fit_time
+                    lr_scores['std_fit_time'] = std_fit_time
+                    lr_scores['mean_accuracy'] = mean_accuracy
+                    lr_scores['std_accuracy'] = std_accuracy
+                    answer_lr['clf'] = clf_lr
+                    answer_lr['cv'] = cv
+                    answer_lr['scores'] = lr_scores
+
+                    #PART C
+                    clf_c = DecisionTreeClassifier(random_state=self.seed)
+                    cv_c = KFold(n_splits=5, shuffle=True, random_state=self.seed)
+                    cv_results = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_c, cv=cv_c)
+                    answer_dt_c = {}
+                    answer_dt_c['clf'] = clf_c
+                    answer_dt_c['cv'] = cv_c
+                    scores_dt_c = {}
+
+
+                    mean_accuracy = cv_results['test_score'].mean()
+                    std_accuracy = cv_results['test_score'].std()
+
+                    mean_fit_time = cv_results['fit_time'].mean()
+                    std_fit_time = cv_results['fit_time'].std()
+
+                    scores_dt_c['mean_fit_time'] = mean_fit_time
+                    scores_dt_c['std_fit_time'] = std_fit_time
+                    scores_dt_c['mean_accuracy'] = mean_accuracy
+                    scores_dt_c['std_accuracy'] = std_accuracy
+
+                    answer_dt_c['scores'] = scores_dt_c
+
+                    #PART D
+                    clf_d = DecisionTreeClassifier(random_state=self.seed)
+                    cv_d = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
+                    cv_results_d = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_d, cv=cv_d)
+
+                    answer_dt_d = {}
+                    scores_d = {}
+
+                    answer_dt_d['clf'] = clf_d
+                    answer_dt_d['cv'] = cv_d
+
+
+                    mean_accuracy = cv_results_d['test_score'].mean()
+                    std_accuracy = cv_results_d['test_score'].std()
+
+                    mean_fit_time = cv_results_d['fit_time'].mean()
+                    std_fit_time = cv_results_d['fit_time'].std()
+
+                    scores_d['mean_fit_time'] = mean_fit_time
+                    scores_d['std_fit_time'] = std_fit_time
+                    scores_d['mean_accuracy'] = mean_accuracy
+                    scores_d['std_accuracy'] = std_accuracy
+
+                    answer_dt_d['scores'] = scores_d
+                    answer_dt_d['explain_kfold_vs_shuffle_split'] = """
+                        K-Fold Cross-Validation divides the dataset into k sequential folds, utilizing each fold once as a test set while the remaining k-1 folds serve as the training set. This method ensures that every data point gets an opportunity to be in both the training and test sets, making it advantageous for smaller datasets where maximizing training data is crucial.
+
+                        On the other hand, Shuffle-Split Cross-Validation creates multiple independent train/test splits by shuffling the samples and dividing them into training and test sets. This technique offers more flexibility in determining the size of the test set and the number of iterations. It is particularly useful for larger datasets or when a more randomized selection of samples is desired.
+
+                        Advantages of Shuffle-Split include greater control over test set size and iteration numbers, making it efficient for large datasets. However, it may provide less systematic coverage of data compared to k-fold and could lead to higher variance in test performance across iterations due to its random nature.
+                        
+                        In practice, Shuffle-Split often proves faster and may yield higher accuracy, but it's essential to consider the trade-offs between systematic coverage and randomness in data selection.
+                    """
+
+                    unique, counts_train = np.unique(ytrain, return_counts=True)
+                    class_count_train = dict(zip(unique, counts_train))
+
+                    unique, counts_test = np.unique(ytest, return_counts=True)
+                    class_count_test = dict(zip(unique, counts_test))
+
+                    answers[ntrain][ntest] = {
+                        "partC": answer_dt_c,
+                        "partD": answer_dt_d,
+                        "partF": answer_lr,
+                        "ntrain": ntrain,
+                        "ntest": ntest,
+                        "class_count_train": class_count_train,
+                        "class_count_test": class_count_test,
+                    }
+                    
+            return answers
