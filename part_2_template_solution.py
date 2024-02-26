@@ -166,6 +166,7 @@ class Section2:
                     lr_scores['std_fit_time'] = std_fit_time
                     lr_scores['mean_accuracy'] = mean_accuracy
                     lr_scores['std_accuracy'] = std_accuracy
+                    
                     answer_lr['clf'] = clf_lr
                     answer_lr['cv'] = cv
                     answer_lr['scores'] = lr_scores
@@ -175,14 +176,10 @@ class Section2:
                     cv_c = KFold(n_splits=5, shuffle=True, random_state=self.seed)
                     cv_results = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_c, cv=cv_c)
                     answer_dt_c = {}
-                    answer_dt_c['clf'] = clf_c
-                    answer_dt_c['cv'] = cv_c
                     scores_dt_c = {}
-
 
                     mean_accuracy = cv_results['test_score'].mean()
                     std_accuracy = cv_results['test_score'].std()
-
                     mean_fit_time = cv_results['fit_time'].mean()
                     std_fit_time = cv_results['fit_time'].std()
 
@@ -191,6 +188,8 @@ class Section2:
                     scores_dt_c['mean_accuracy'] = mean_accuracy
                     scores_dt_c['std_accuracy'] = std_accuracy
 
+                    answer_dt_c['clf'] = clf_c
+                    answer_dt_c['cv'] = cv_c
                     answer_dt_c['scores'] = scores_dt_c
 
                     #PART D
@@ -200,10 +199,6 @@ class Section2:
 
                     answer_dt_d = {}
                     scores_d = {}
-
-                    answer_dt_d['clf'] = clf_d
-                    answer_dt_d['cv'] = cv_d
-
 
                     mean_accuracy = cv_results_d['test_score'].mean()
                     std_accuracy = cv_results_d['test_score'].std()
@@ -216,6 +211,8 @@ class Section2:
                     scores_d['mean_accuracy'] = mean_accuracy
                     scores_d['std_accuracy'] = std_accuracy
 
+                    answer_dt_d['clf'] = clf_d
+                    answer_dt_d['cv'] = cv_d
                     answer_dt_d['scores'] = scores_d
                     answer_dt_d['explain_kfold_vs_shuffle_split'] = """
                         K-Fold Cross-Validation divides the dataset into k sequential folds, utilizing each fold once as a test set while the remaining k-1 folds serve as the training set. This method ensures that every data point gets an opportunity to be in both the training and test sets, making it advantageous for smaller datasets where maximizing training data is crucial.
