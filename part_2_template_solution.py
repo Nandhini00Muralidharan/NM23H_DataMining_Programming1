@@ -135,9 +135,6 @@ class Section2:
                                the training set (a list, not a numpy array)
         """
         
-        ntrain_list = [1000, 5000, 10000]
-        ntest_list = [200, 1000, 2000]
-        
         answers = {}
         
         for ntrain in ntrain_list:
