@@ -145,97 +145,85 @@ class Section2:
                                the training set (a list, not a numpy array)
         """
         
-        answers = {}
-        
-        for ntrain in ntrain_list:
-            answers[ntrain] = {}
-            for ntest in ntest_list:
-                    Xtrain = X[0:ntrain, :]
-                    ytrain = y[0:ntrain]
-                    Xtest = X[ntrain:ntrain+ntest]
-                    ytest = y[ntrain:ntrain+ntest]
+        for i in range(0, len(ntrain_list)):
+            ntrain = ntrain_list[i]
+            ntest = ntest_list[i]
+    
+            Xtrain = X[0:ntrain,:]
+            ytrain = y[0:ntrain]
+            Xtest = Xtest[0:ntest]
+            ytest = ytest[0:ntest]
+            
+            X = Xtrain
+            y = ytrain
 
-                    #PART C
-                    clf_C = DecisionTreeClassifier(random_state=self.seed)
-                    cv_C = KFold(n_splits=5, shuffle=True, random_state=self.seed)
-                    cv_results_C = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_C, cv=cv_C)
+            #PART C
+            clf_C = DecisionTreeClassifier(random_state=self.seed)
+            cv_C = KFold(n_splits=5, shuffle=True, random_state=self.seed)
+            cv_results_C = u.train_simple_classifier_with_cv(Xtrain=X, ytrain=y, clf=clf_C, cv=cv_C)
                     
-                    partC = {}
-                    scores_C= {}
+            partC = {}
+            scores_C= {}
 
-                    mean_accuracy_C = cv_results_C['test_score'].mean()
-                    std_accuracy_C = cv_results_C['test_score'].std()
-                    mean_fit_time_C = cv_results_C['fit_time'].mean()
-                    std_fit_time_C = cv_results_C['fit_time'].std()
+            scores_C['mean_fit_time'] = cv_results_C['fit_time'].mean()
+            scores_C['std_fit_time'] = cv_results_C['fit_time'].std()
+            scores_C['mean_accuracy'] = cv_results_C['test_score'].mean()
+            scores_C['std_accuracy'] = cv_results_C['test_score'].std()
 
-                    scores_C['mean_fit_time'] = mean_fit_time_C
-                    scores_C['std_fit_time'] = std_fit_time_C
-                    scores_C['mean_accuracy'] = mean_accuracy_C
-                    scores_C['std_accuracy'] = std_accuracy_C
-
-                    partC['clf'] = clf_C
-                    partC['cv'] = cv_C
-                    partC['scores'] = scores_C
+            partC['clf'] = clf_C
+            partC['cv'] = cv_C
+            partC['scores'] = scores_C
                     
-                    #PART F
-                    cv_F = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
-                    clf_F = LogisticRegression(max_iter=300, multi_class='ovr', random_state=self.seed)
-                    cv_results_F = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_F, cv=cv_F)
+            #PART F
+            cv_F = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
+            clf_F = LogisticRegression(max_iter=300, multi_class='ovr', random_state=self.seed)
+            cv_results_F = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_F, cv=cv_F)
                     
-                    partF = {}
-                    scores_F = {}
+            partF = {}
+            scores_F = {}
 
-                    mean_accuracy_F = cv_results_F['test_score'].mean()
-                    std_accuracy_F = cv_results_F['test_score'].std()
-                    mean_fit_time_F = cv_results_F['fit_time'].mean()
-                    std_fit_time_F = cv_results_F['fit_time'].std()
-
-                    scores_F['mean_fit_time'] = mean_fit_time_F
-                    scores_F['std_fit_time'] = std_fit_time_F
-                    scores_F['mean_accuracy'] = mean_accuracy_F
-                    scores_F['std_accuracy'] = std_accuracy_F
+            scores_F['mean_fit_time'] = cv_results_F['fit_time'].mean()
+            scores_F['std_fit_time'] = cv_results_F['fit_time'].std()
+            scores_F['mean_accuracy'] = cv_results_F['test_score'].mean()
+            scores_F['std_accuracy'] = cv_results_F['test_score'].std()
                     
-                    partF['clf'] = clf_F
-                    partF['cv'] = cv_F
-                    partF['scores'] = scores_F
+            partF['clf'] = clf_F
+            partF['cv'] = cv_F
+            partF['scores'] = scores_F
                     
-                    #PART D
-                    clf_D = DecisionTreeClassifier(random_state=self.seed)
-                    cv_D = KFold(n_splits=5, shuffle=True, random_state=self.seed)
-                    cv_results_D = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_D, cv=cv_D)
+            #PART D
+            clf_D = DecisionTreeClassifier(random_state=self.seed)
+            cv_D = KFold(n_splits=5, shuffle=True, random_state=self.seed)
+            cv_results_D = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_D, cv=cv_D)
                     
-                    partD = {}
-                    scores_D= {}
+            partD = {}
+            scores_D= {}
 
-                    mean_accuracy_D = cv_results_D['test_score'].mean()
-                    std_accuracy_D = cv_results_D['test_score'].std()
-                    mean_fit_time_D = cv_results_D['fit_time'].mean()
-                    std_fit_time_D = cv_results_D['fit_time'].std()
+            scores_D['mean_fit_time'] = cv_results_D['fit_time'].mean()
+            scores_D['std_fit_time'] = cv_results_D['fit_time'].std()
+            scores_D['mean_accuracy'] = cv_results_D['test_score'].mean()
+            scores_D['std_accuracy'] = cv_results_D['test_score'].std()
 
-                    scores_D['mean_fit_time'] = mean_fit_time_D
-                    scores_D['std_fit_time'] = std_fit_time_D
-                    scores_D['mean_accuracy'] = mean_accuracy_D
-                    scores_D['std_accuracy'] = std_accuracy_D
+            partD['clf'] = clf_D
+            partD['cv'] = cv_D
+            partD['scores'] = scores_D
+            
+            partD['explain_kfold_vs_shuffle_split'] = "K-Fold Cross-Validation divides the dataset into k sequential folds, utilizing each fold once as a test set while the remaining k-1 folds serve as the training set. This method ensures that every data point gets an opportunity to be in both the training and test sets, making it advantageous for smaller datasets where maximizing training data is crucial. On the other hand, Shuffle-Split Cross-Validation creates multiple independent train/test splits by shuffling the samples and dividing them into training and test sets. This technique offers more flexibility in determining the size of the test set and the number of iterations. It is particularly useful for larger datasets or when a more randomized selection of samples is desired. Advantages of Shuffle-Split include greater control over test set size and iteration numbers, making it efficient for large datasets. However, it may provide less systematic coverage of data compared to k-fold and could lead to higher variance in test performance across iterations due to its random nature. In practice, Shuffle-Split often proves faster and may yield higher accuracy, but it's essential to consider the trade-offs between systematic coverage and randomness in data selection."
 
-                    partD['clf'] = clf_D
-                    partD['cv'] = cv_D
-                    partD['scores'] = scores_D
-                    partD['explain_kfold_vs_shuffle_split'] = "K-Fold Cross-Validation divides the dataset into k sequential folds, utilizing each fold once as a test set while the remaining k-1 folds serve as the training set. This method ensures that every data point gets an opportunity to be in both the training and test sets, making it advantageous for smaller datasets where maximizing training data is crucial. On the other hand, Shuffle-Split Cross-Validation creates multiple independent train/test splits by shuffling the samples and dividing them into training and test sets. This technique offers more flexibility in determining the size of the test set and the number of iterations. It is particularly useful for larger datasets or when a more randomized selection of samples is desired. Advantages of Shuffle-Split include greater control over test set size and iteration numbers, making it efficient for large datasets. However, it may provide less systematic coverage of data compared to k-fold and could lead to higher variance in test performance across iterations due to its random nature. In practice, Shuffle-Split often proves faster and may yield higher accuracy, but it's essential to consider the trade-offs between systematic coverage and randomness in data selection."
-
-                    unique_train, counts_train = np.unique(ytrain, return_counts=True)
-                    class_count_train = dict(zip(unique_train, counts_train))
+            unique_train, counts_train = np.unique(ytrain, return_counts=True)
+            class_count_train = dict(zip(unique_train, counts_train))
                     
-                    unique_test, counts_test = np.unique(ytest, return_counts=True)
-                    class_count_test = dict(zip(unique_test, counts_test))
+            unique_test, counts_test = np.unique(ytest, return_counts=True)
+            class_count_test = dict(zip(unique_test, counts_test))
 
-                    answers[ntrain] = {
-                        "partC": partC,
-                        "partD": partD,
-                        "partF": partF,
-                        "ntrain": ntrain,
-                        "ntest": ntest,
-                        "class_count_train": class_count_train,
-                        "class_count_test": class_count_test
-                    }
+            answer[ntrain_list[i]] = {
+                "partC": partC,
+                "partD": partD,
+                "partF": partF,
+                "ntrain": ntrain,
+                "ntest": ntest,
+                "class_count_train": class_count_train,
+                "class_count_test": class_count_test
+            }
                     
-        return answers
+        return answer
