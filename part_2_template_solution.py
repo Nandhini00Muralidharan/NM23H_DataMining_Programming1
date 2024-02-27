@@ -180,24 +180,30 @@ class Section2:
                     #PART F
                     cv_F = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
                     clf_F = LogisticRegression(max_iter=300, multi_class='ovr', random_state=self.seed)
-                    cv_results_F = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_F, cv=cv_F)
                     
-                    partF = {}
-                    scores_F = {}
-
-                    mean_accuracy_F = cv_results_F['test_score'].mean()
-                    std_accuracy_F = cv_results_F['test_score'].std()
-                    mean_fit_time_F = cv_results_F['fit_time'].mean()
-                    std_fit_time_F = cv_results_F['fit_time'].std()
-
-                    scores_F['mean_fit_time'] = mean_fit_time_F
-                    scores_F['std_fit_time'] = std_fit_time_F
-                    scores_F['mean_accuracy'] = mean_accuracy_F
-                    scores_F['std_accuracy'] = std_accuracy_F
+                    clf_F.fit(X_train, y_train)
                     
-                    partF['clf'] = clf_F
-                    partF['cv'] = cv_F
-                    partF['scores'] = scores_F
+                    scores_train_F = clf_F.score(X_train, y_train)
+                    scores_test_F = clf_F.score(X_test, y_test)
+                    
+                    cross_val_scores = cross_val_score(clf_F, X_train, y_train, cv=cv_F)
+                    mean_cv_accuracy_F = np.mean(cross_val_scores)
+                    
+                    predictions_train = clf_F.predict(X_train)
+                    predictions_test = clf_F.predict(X_test)
+                    conf_mat_train = confusion_matrix(y_train, predictions_train)
+                    conf_mat_test = confusion_matrix(y_test, predictions_test)
+
+                    partF = {
+                        "scores_train_F": scores_train_F,
+                        "scores_test_F": scores_test_F,
+                        "mean_cv_accuracy_F": mean_cv_accuracy_F,
+                        "clf": clf_F,
+                        "cv": cv_F,
+                        "conf_mat_train": conf_mat_train,
+                        "conf_mat_test": conf_mat_test
+                    }
+
                     
                     #PART D
                     clf_D = DecisionTreeClassifier(random_state=self.seed)
