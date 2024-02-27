@@ -195,6 +195,10 @@ class Section2:
                     scores_F['mean_accuracy'] = mean_accuracy_F
                     scores_F['std_accuracy'] = std_accuracy_F
                     
+                    #CONFUSION MATRIX
+                    conf_mat_train = confusion_matrix(ytrain, clf_F.predict(Xtrain))
+                    conf_mat_test = confusion_matrix(ytest, clf_F.predict(Xtest))
+                    
                     partF['clf'] = clf_F
                     partF['cv'] = cv_F
                     partF['scores'] = scores_F
