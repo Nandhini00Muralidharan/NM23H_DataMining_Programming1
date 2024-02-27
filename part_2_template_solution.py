@@ -175,21 +175,32 @@ class Section2:
             partC['scores'] = scores_C
                     
             #PART F
-            cv_F = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
-            clf_F = LogisticRegression(max_iter=300, multi_class='ovr', random_state=self.seed)
-            cv_results_F = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_F, cv=cv_F)
-                    
-            partF = {}
-            scores_F = {}
-
-            scores_F['mean_fit_time'] = cv_results_F['fit_time'].mean()
-            scores_F['std_fit_time'] = cv_results_F['fit_time'].std()
-            scores_F['mean_accuracy'] = cv_results_F['test_score'].mean()
-            scores_F['std_accuracy'] = cv_results_F['test_score'].std()
-                    
-            partF['clf'] = clf_F
-            partF['cv'] = cv_F
-            partF['scores'] = scores_F
+            partF ={}
+        
+            clf_F = LogisticRegression(max_iter=300, random_state=self.seed)
+            cv_F = ShuffleSplit(n_splits=5, random_state=self.seed)
+            scores_F = cross_validate(clf_F, X, y, cv=cv_F, return_train_score=True)
+            
+            clf_F.fit(X, y)
+            
+            scores_train_F = clf_F.score(X, y)
+            scores_test_F = clf_F.score(Xtest, ytest) 
+            
+            train_prediction =clf_F.predict(X)
+            test_prediction = clf_F.predict(Xtest)
+            conf_mat_train = confusion_matrix(y, train_prediction)
+            conf_mat_test = confusion_matrix(ytest, test_prediction)
+            
+            mean_cv_accuracy_F = scores_F["test_score"].mean()
+            partF = {
+                "scores_train_F": scores_train_F,
+                "scores_test_F": scores_test_F,
+                "mean_cv_accuracy_F": mean_cv_accuracy_F,
+                "clf": clf_F,
+                "cv": cv_F,
+                "conf_mat_train": conf_mat_train,
+                "conf_mat_test": conf_mat_test
+            }
                     
             #PART D
             clf_D = DecisionTreeClassifier(random_state=self.seed)
