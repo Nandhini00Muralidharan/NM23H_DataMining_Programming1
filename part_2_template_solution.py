@@ -212,11 +212,11 @@ class Section2:
                     partD['scores'] = scores_D
                     partD['explain_kfold_vs_shuffle_split'] = "K-Fold Cross-Validation divides the dataset into k sequential folds, utilizing each fold once as a test set while the remaining k-1 folds serve as the training set. This method ensures that every data point gets an opportunity to be in both the training and test sets, making it advantageous for smaller datasets where maximizing training data is crucial. On the other hand, Shuffle-Split Cross-Validation creates multiple independent train/test splits by shuffling the samples and dividing them into training and test sets. This technique offers more flexibility in determining the size of the test set and the number of iterations. It is particularly useful for larger datasets or when a more randomized selection of samples is desired. Advantages of Shuffle-Split include greater control over test set size and iteration numbers, making it efficient for large datasets. However, it may provide less systematic coverage of data compared to k-fold and could lead to higher variance in test performance across iterations due to its random nature. In practice, Shuffle-Split often proves faster and may yield higher accuracy, but it's essential to consider the trade-offs between systematic coverage and randomness in data selection."
 
-                    unique, counts_train = np.unique(ytrain, return_counts=True)
-                    class_count_train = dict(zip(unique, counts_train))
+                    unique_train, counts_train = np.unique(ytrain, return_counts=True)
+                    class_count_train = len(unique_train)
 
-                    unique, counts_test = np.unique(ytest, return_counts=True)
-                    class_count_test = dict(zip(unique, counts_test))
+                    unique_test, counts_test = np.unique(ytest, return_counts=True)
+                    class_count_test = len(unique_test)
 
                     answers[ntrain] = {
                         "partC": partC,
