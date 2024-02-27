@@ -75,18 +75,28 @@ class Section2:
         # return values:
         # Xtrain, ytrain, Xtest, ytest: the data used to fill the `answer`` dictionary
 
-        Xtrain = Xtest = np.zeros([1, 1], dtype="float")
-        ytrain = ytest = np.zeros([1], dtype="int")
+        #LOAD DATASET
+        X, y = self.load_data()
+        
+        #SPLIT - TRAINING AND TESTING SET
+        Xtrain, Xtest, ytrain, ytest = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        X, y, Xtest, ytest = u.prepare_data()
+        #NUMBER OF UNIQUE CLASSES, COUNT OF EACH CLASS
+        classes_train, count_train = unique(ytrain, return_counts=True)
+        classes_test, count_test = unique(ytest, return_counts=True)
         
-        Xtrain = nu.scale_data(X)
-        Xtest = nu.scale_data(Xtest)
-        ytrain = y.astype(int)
-        ytest = ytest.astype(int)
-        
-        print(set(ytrain))
-        print(set(ytest))
+        answer = {
+            'nb_classes_train': len(classes_train),
+            'nb_classes_test': len(classes_test),
+            'class_count_train': dict(zip(classes_train, count_train)),
+            'class_count_test': dict(zip(classes_test, count_test)),
+            'length_Xtrain': Xtrain.shape[0],
+            'length_Xtest': Xtest.shape[0],
+            'length_ytrain': ytrain.shape[0],
+            'length_ytest': ytest.shape[0],
+            'max_Xtrain': Xtrain.max(),
+            'max_Xtest': Xtest.max()
+        }
 
         return answer, Xtrain, ytrain, Xtest, ytest
 
