@@ -178,32 +178,26 @@ class Section2:
                     partC['scores'] = scores_C
                     
                     #PART F
+                    cv_F = ShuffleSplit(n_splits=5, test_size=0.2, random_state=self.seed)
                     clf_F = LogisticRegression(max_iter=300, multi_class='ovr', random_state=self.seed)
-                    cv_F = ShuffleSplit(n_splits=5, random_state=self.seed)
+                    cv_results_F = u.train_simple_classifier_with_cv(Xtrain=Xtrain, ytrain=ytrain, clf=clf_F, cv=cv_F)
                     
-                    cross_val_scores = cross_validate(clf_F, Xtrain, ytrain, cv=cv_F, return_train_score=True)
-                    
-                    clf_F.fit(Xtrain, ytrain)
-                    
-                    scores_train_F = clf_F.score(Xtrain, ytrain)
-                    scores_test_F = clf_F.score(Xtest, ytest)
-                    
-                    mean_cv_accuracy_F = cross_val_scores["test_score"].mean()
-                    
-                    predictions_train = clf_F.predict(Xtrain)
-                    predictions_test = clf_F.predict(Xtest)
-                    conf_mat_train = confusion_matrix(ytrain, predictions_train)
-                    conf_mat_test = confusion_matrix(ytest, predictions_test)
+                    partF = {}
+                    scores_F = {}
 
-                    partF = {
-                        "scores_train_F": scores_train_F,
-                        "scores_test_F": scores_test_F,
-                        "mean_cv_accuracy_F": mean_cv_accuracy_F,
-                        "clf": clf_F,
-                        "cv": cv_F,
-                        "conf_mat_train": conf_mat_train,
-                        "conf_mat_test": conf_mat_test
-                    }
+                    mean_accuracy_F = cv_results_F['test_score'].mean()
+                    std_accuracy_F = cv_results_F['test_score'].std()
+                    mean_fit_time_F = cv_results_F['fit_time'].mean()
+                    std_fit_time_F = cv_results_F['fit_time'].std()
+
+                    scores_F['mean_fit_time'] = mean_fit_time_F
+                    scores_F['std_fit_time'] = std_fit_time_F
+                    scores_F['mean_accuracy'] = mean_accuracy_F
+                    scores_F['std_accuracy'] = std_accuracy_F
+                    
+                    partF['clf'] = clf_F
+                    partF['cv'] = cv_F
+                    partF['scores'] = scores_F
                     
                     #PART D
                     clf_D = DecisionTreeClassifier(random_state=self.seed)
